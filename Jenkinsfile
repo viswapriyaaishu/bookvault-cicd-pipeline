@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'viswapriya/bookvault'
-        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+        KUBECONFIG = '/var/jenkins_home/.kube/config'
     }
 
     stages {
