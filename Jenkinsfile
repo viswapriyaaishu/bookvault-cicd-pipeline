@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -8,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -15,13 +15,13 @@ pipeline {
         }
 
         stage('Gitleaks Secret Scan') {
-        steps {
-            sh '''
-                docker run --rm \
-                  -v "$WORKSPACE:/repo" \
-                  gitleaks/gitleaks:latest \
-                  dir --redact /repo
-            '''
+            steps {
+                sh '''
+                    docker run --rm \
+                      -v "$WORKSPACE:/repo" \
+                      ghcr.io/gitleaks/gitleaks:latest \
+                      dir --redact /repo
+                '''
             }
         }
 
@@ -55,6 +55,7 @@ pipeline {
 
                         docker push "$IMAGE_NAME:$BUILD_NUMBER"
                         docker push "$IMAGE_NAME:latest"
+
                         docker logout
                     '''
                 }
@@ -89,6 +90,7 @@ pipeline {
                         echo "BookVault health check passed"
                         exit 0
                       fi
+
                       sleep 10
                     done
 
