@@ -1,0 +1,30 @@
+---
+- name: Configure BookVault EC2 Environment
+  hosts: bookvault_servers
+  become: true
+
+  tasks:
+    - name: Install Git and Docker
+      ansible.builtin.dnf:
+        name:
+          - git
+          - docker
+        state: present
+
+    - name: Enable and start Docker
+      ansible.builtin.service:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Create BookVault application directory
+      ansible.builtin.file:
+        path: /opt/bookvault
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: "0755"
+
+    - name: Display configuration completion
+      ansible.builtin.debug:
+        msg: "BookVault EC2 configuration completed."
