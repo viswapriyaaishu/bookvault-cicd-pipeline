@@ -27,8 +27,10 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw -B clean package'
+                sh '''
+                    chmod +x mvnw
+                    ./mvnw -B clean package
+                '''
             }
         }
 
@@ -77,7 +79,6 @@ pipeline {
             }
         }
 
-      
         stage('Verify Deployment') {
             steps {
                 sh '''
@@ -109,8 +110,22 @@ pipeline {
             }
         }
 
-  
-   }
+        stage('Ansible Configuration') {
+            steps {
+                sh '''
+                    echo "Checking Ansible installation..."
+
+                    ansible --version
+
+                    echo "Running Ansible playbook..."
+
+                    ansible-playbook \
+                      -i inventory.ini \
+                      setup-bookvault.yml
+                '''
+            }
+        }
+    }
 
     post {
         always {
