@@ -77,6 +77,7 @@ pipeline {
             }
         }
 
+      
         stage('Verify Deployment') {
             steps {
                 sh '''
@@ -84,22 +85,32 @@ pipeline {
                     kubectl get pods -l app=bookvault
                     kubectl get service bookvault
 
+                    kubectl port-forward svc/bookvault 18080:8080 \
+                      > /tmp/bookvault-port-forward.log 2>&1 &
+
+                    PORT_FORWARD_PID=$!
+
+                    trap 'kill $PORT_FORWARD_PID 2>/dev/null || true' EXIT
+
                     for i in $(seq 1 12); do
                       if curl -fsS \
-                        http://127.0.0.1:30081/actuator/health; then
+                        http://127.0.0.1:18080/actuator/health; then
                         echo "BookVault health check passed"
                         exit 0
                       fi
 
-                      sleep 10
+                      sleep 5
                     done
 
                     echo "BookVault health check failed"
+                    cat /tmp/bookvault-port-forward.log
                     exit 1
                 '''
             }
         }
-    }
+
+  
+   }
 
     post {
         always {
