@@ -14,6 +14,17 @@ pipeline {
             }
         }
 
+        stage('Gitleaks Secret Scan') {
+        steps {
+            sh '''
+                docker run --rm \
+                  -v "$WORKSPACE:/repo" \
+                  gitleaks/gitleaks:latest \
+                  dir --redact /repo
+            '''
+            }
+        }
+
         stage('Build and Test') {
             steps {
                 sh 'chmod +x mvnw'
