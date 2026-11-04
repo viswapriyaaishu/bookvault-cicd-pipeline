@@ -1,5 +1,6 @@
-
 FROM amazoncorretto:21-alpine
+
+LABEL app="BookVault" version="1.0" maintainer="Viswapriya"
 
 WORKDIR /app
 
